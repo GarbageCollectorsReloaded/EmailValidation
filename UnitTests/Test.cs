@@ -234,6 +234,13 @@ namespace UnitTests
 			return Validator.TryValidateObject (target, context, results, true);
 		}
 
+		[Test]
+		public void TestInvalidIpAddress()
+		{
+		    string address = "valid.ipv4.addr@[123]";
+		    Assert.IsFalse(EmailValidator.Validate(address, true), "Invalid Address #{0}", address);
+		}
+		
 		class EmailValidationTarget
 		{
 			[Email (true)]
