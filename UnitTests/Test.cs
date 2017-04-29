@@ -177,6 +177,15 @@ namespace UnitTests
 		{
 			Assert.Throws<ArgumentNullException> (() => EmailValidator.Validate (null, true, true), "Null Address");
 		}
+		
+		[Test]
+        	public void TestForNullAttribute ()
+        	{
+            		var target = new InternationalEmailValidationTarget();
+            		target.Email = null;
+
+            		Assert.IsFalse(AreAttributesValid(target), "Address is null");
+        	}
 
 		[Test]
 		public void TestValidationAttributeValidAddresses ()
