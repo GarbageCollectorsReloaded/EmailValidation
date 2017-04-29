@@ -241,6 +241,13 @@ namespace UnitTests
 		    Assert.IsFalse(EmailValidator.Validate(address, true), "Invalid Address #{0}", address);
 		}
 		
+		[Test]
+        	public void TestForSkippingDomain()
+        	{
+            	    var address = "asd@hu";
+            	    Assert.IsFalse(EmailValidator.Validate(address, false), $"Invalid Address #{0}", address);
+        	}
+		
 		class EmailValidationTarget
 		{
 			[Email (true)]
