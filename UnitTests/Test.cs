@@ -213,6 +213,18 @@ namespace UnitTests
 				Assert.IsTrue (AreAttributesValid (target), "Valid International Address {0}", email);
 			}
 		}
+		
+		[Test]
+		public void TestValidationSkipQuotedWrongStartingCharacter()
+		{
+		    Assert.IsFalse(EmailValidator.Validate("\"é129.185.11.100", false, false));
+		}
+
+		[Test]
+		public void TestValidationSkipQuotedWrongEndCharaecterIndex()
+		{
+		    Assert.IsFalse(EmailValidator.Validate("\"", false, false));
+		}
 
 		bool AreAttributesValid (object target)
 		{
