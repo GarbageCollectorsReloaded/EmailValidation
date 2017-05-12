@@ -98,15 +98,22 @@ namespace UnitTests
 		};
 
 		static readonly string[] InvalidAddresses = {
-			"",
-			"invalid",
+            //ipv4 codecoverage
+            "",
+            "\"",
+            "\"é129.185.11.100",
+            "invalid@[127.0.0.1",           
+
+            "invalid",
 			"invalid@",
-			"invalid @",
-			"invalid@[555.666.777.888]",
+			"invalid @",            
+            "invalid@[555.666.777.888]",
+            "invalid.ipv4.addr@[123]",
 			"invalid@[IPv6:123456]",
 			"invalid@[127.0.0.1.]",
 			"invalid@[127.0.0.1].",
 			"invalid@[127.0.0.1]x",
+            
 
 			// examples from wikipedia
 			"Abc.example.com",
@@ -138,6 +145,14 @@ namespace UnitTests
 			"the-total-length@of-an-entire-address.cannot-be-longer-than-two-hundred-and-fifty-four-characters.and-this-address-is-255-characters-exactly.so-it-should-be-invalid.and-im-going-to-add-some-more-words-here.to-increase-the-lenght-blah-blah-blah-blah-bl.org",
 			"two..consecutive-dots@sld.com",
 			//"unbracketed-IP@127.0.0.1",
+
+            //ipv6 codecoverage
+            "invalid@[IPv6:123456",
+            "invalid@[IPv6::::FFFF:12345",
+            "invalid@[IPv6::FF::FF::0015]",
+            "invalid.ipv6.addr@[IPv6:2607:f0d0:",
+            "invalid.ipv6.addr@[IPv6:2607:f0d0:1002:5.1::4]",
+            "invalid.ipv6.addr@[IPv6:fe80:0000::123.1.72.10:0000:0202:b3ff:fe1e:8329]",
 
 			// examples of real (invalid) input from real users.
 			"No longer available.",
@@ -175,18 +190,14 @@ namespace UnitTests
 		[Test]
 		public void TestThrowsExceptionIfNull ()
 		{
-			Assert.Throws<ArgumentNullException> (() => EmailValidator.Validate (null, true, true), "Null Address");
-		}
+            string mayBeNull = "";
+            Action func = () => EmailValidator.Validate(mayBeNull, true, true);
+            func();
+            mayBeNull = null;
+            Assert.Throws<ArgumentNullException>(new TestDelegate(func), "Null Address");
+        }
 		
-		[Test]
-        	public void TestForNullAttribute ()
-        	{
-            		var target = new InternationalEmailValidationTarget();
-            		target.Email = null;
-
-            		Assert.IsFalse(AreAttributesValid(target), "Address is null");
-        	}
-
+		
 		[Test]
 		public void TestValidationAttributeValidAddresses ()
 		{
@@ -199,7 +210,16 @@ namespace UnitTests
 			}
 		}
 
-		[Test]
+        [Test]
+        public void TestThrowsExceptionIfNullAttribute()
+        {
+            var target = new InternationalEmailValidationTarget();
+            target.Email = null;
+
+            Assert.IsFalse(AreAttributesValid(target), "Address is null");
+        }
+
+        [Test]
 		public void TestValidationAttributeInvalidAddresses ()
 		{
 			EmailValidationTarget target = new EmailValidationTarget ();
@@ -223,18 +243,6 @@ namespace UnitTests
 			}
 		}
 		
-		[Test]
-		public void TestValidationSkipQuotedWrongStartingCharacter()
-		{
-		    Assert.IsFalse(EmailValidator.Validate("\"é129.185.11.100", false, false));
-		}
-
-		[Test]
-		public void TestValidationSkipQuotedWrongEndCharaecterIndex()
-		{
-		    Assert.IsFalse(EmailValidator.Validate("\"", false, false));
-		}
-
 		bool AreAttributesValid (object target)
 		{
 			var context = new ValidationContext (target, null, null);
@@ -242,20 +250,13 @@ namespace UnitTests
 
 			return Validator.TryValidateObject (target, context, results, true);
 		}
-
+        
 		[Test]
-		public void TestInvalidIpAddress()
-		{
-		    string address = "valid.ipv4.addr@[123]";
-		    Assert.IsFalse(EmailValidator.Validate(address, true), "Invalid Address #{0}", address);
-		}
-		
-		[Test]
-        	public void TestForSkippingDomain()
-        	{
-            	    var address = "asd@hu";
-            	    Assert.IsFalse(EmailValidator.Validate(address, false), $"Invalid Address #{0}", address);
-        	}
+        public void TestForTopLevelDomainDenial()
+        {
+           	    var address = "asd@hu";
+           	    Assert.IsFalse(EmailValidator.Validate(address, false), $"Invalid Address #{0}", address);
+        }
 		
 		class EmailValidationTarget
 		{
@@ -270,3 +271,4 @@ namespace UnitTests
 		}
 	}
 }
+
