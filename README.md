@@ -1,3 +1,5 @@
+[![Coverage Status](https://coveralls.io/repos/github/GarbageCollectorsReloaded/EmailValidation/badge.svg?branch=master)](https://coveralls.io/github/GarbageCollectorsReloaded/EmailValidation?branch=master)
+
 # EmailValidation
 
 ## What is EmailValidation?
